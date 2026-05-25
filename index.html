@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QARP – Quality Assurance Request Portal | NTPC Dadri</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root{--cerulean:#0077B6;--cerulean-dark:#005F96;--cerulean-deep:#003F6B;--cerulean-light:#90E0EF;--cerulean-pale:#CAF0F8;--accent:#FF6B35;--gold:#F4A900;--surface:#F0F7FF;--white:#FFFFFF;--text:#0D2137;--text-muted:#5A7A9A;--border:#C8DFF0;--success:#2ecc71;--warning:#f39c12;--danger:#e74c3c;--info:#3498db;--card-shadow:0 4px 20px rgba(0,119,182,0.12);}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'Source Sans 3',sans-serif;background:var(--surface);color:var(--text);min-height:100vh;-webkit-tap-highlight-color:transparent;}
+/* HEADER */
+header{background:linear-gradient(135deg,var(--cerulean-deep) 0%,var(--cerulean) 60%,#0096C7 100%);height:72px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:sticky;top:0;z-index:1000;box-shadow:0 3px 16px rgba(0,0,0,0.25);}
+.header-logos{display:flex;align-items:center;gap:14px;}
+.header-logos img{height:52px;width:auto;object-fit:contain;background:white;border-radius:6px;padding:4px 8px;}
+.header-title{text-align:center;flex:1;}
+.header-title h1{font-family:'Rajdhani',sans-serif;font-size:1.65rem;font-weight:700;color:white;letter-spacing:1.5px;line-height:1.1;}
+.header-title h1 span{font-size:1.15em;font-weight:900;}
+.header-title p{font-size:0.78rem;color:var(--cerulean-light);letter-spacing:0.5px;font-weight:300;}
+.header-right{display:flex;align-items:center;gap:12px;}
+.btn-login{background:rgba(255,255,255,0.18);border:1.5px solid rgba(255,255,255,0.4);color:white;padding:7px 18px;border-radius:20px;cursor:pointer;font-family:'Source Sans 3',sans-serif;font-size:0.88rem;font-weight:600;transition:all 0.2s;}
+.btn-login:hover{background:rgba(255,255,255,0.3);}
+#userBadge{display:none;align-items:center;gap:8px;color:white;font-size:0.85rem;}
+#userBadge .avatar{background:var(--gold);color:var(--cerulean-deep);width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.9rem;}
+.btn-logout{background:transparent;border:none;color:rgba(255,255,255,0.75);cursor:pointer;font-size:0.8rem;text-decoration:underline;}
+/* NAV */
+nav{background:var(--cerulean-dark);display:flex;gap:0;border-bottom:3px solid var(--gold);overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+nav::-webkit-scrollbar{display:none;}
+nav button{background:transparent;border:none;color:rgba(255,255,255,0.75);padding:13px 22px;font-family:'Rajdhani',sans-serif;font-size:1rem;font-weight:600;letter-spacing:0.5px;cursor:pointer;transition:all 0.2s;white-space:nowrap;border-bottom:3px solid transparent;margin-bottom:-3px;}
+nav button:hover{color:white;background:rgba(255,255,255,0.08);}
+nav button.active{color:var(--gold);border-bottom-color:var(--gold);background:rgba(255,255,255,0.05);}
+/* MAIN */
+main{max-width:1200px;margin:0 auto;padding:28px 20px;}
+.section{display:none;}
+.section.active{display:block;}
+/* CARD */
+.card{background:white;border-radius:12px;box-shadow:var(--card-shadow);border:1px solid var(--border);overflow:hidden;margin-bottom:20px;}
+.card-header{background:linear-gradient(90deg,var(--cerulean) 0%,var(--cerulean-dark) 100%);color:white;padding:14px 20px;font-family:'Rajdhani',sans-serif;font-size:1.1rem;font-weight:700;letter-spacing:0.5px;display:flex;align-items:center;gap:10px;}
+.card-body{padding:20px;}
+/* FORM */
+.form-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;}
+.form-group{display:flex;flex-direction:column;gap:5px;}
+.form-group.full{grid-column:1/-1;}
+label{font-size:0.85rem;font-weight:600;color:var(--cerulean-dark);}
+label .req{color:var(--accent);}
+input[type="text"],input[type="date"],input[type="time"],input[type="email"],input[type="number"],select,textarea{border:1.5px solid var(--border);border-radius:7px;padding:9px 12px;font-family:'Source Sans 3',sans-serif;font-size:0.92rem;color:var(--text);transition:border-color 0.2s,box-shadow 0.2s;background:white;width:100%;}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--cerulean);box-shadow:0 0 0 3px rgba(0,119,182,0.15);}
+textarea{resize:vertical;min-height:80px;}
+/* CHECKBOX GRID */
+.test-category{margin-bottom:18px;}
+.test-category h4{font-family:'Rajdhani',sans-serif;font-size:0.95rem;font-weight:700;color:white;background:var(--cerulean);padding:5px 12px;border-radius:5px;display:inline-block;margin-bottom:8px;letter-spacing:0.5px;}
+.test-checks{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:8px;}
+.check-item{display:flex;align-items:center;gap:8px;cursor:pointer;padding:6px 10px;border-radius:6px;border:1px solid var(--border);transition:all 0.15s;}
+.check-item:hover{background:var(--cerulean-pale);border-color:var(--cerulean);}
+.check-item input[type="checkbox"]{accent-color:var(--cerulean);width:16px;height:16px;cursor:pointer;}
+.check-item span{font-size:0.88rem;color:var(--text);}
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:7px;padding:10px 22px;border-radius:8px;border:none;font-family:'Source Sans 3',sans-serif;font-size:0.92rem;font-weight:600;cursor:pointer;transition:all 0.2s;}
+.btn-primary{background:var(--cerulean);color:white;}
+.btn-primary:hover{background:var(--cerulean-dark);transform:translateY(-1px);}
+.btn-outline{background:transparent;color:var(--cerulean);border:1.5px solid var(--cerulean);}
+.btn-outline:hover{background:var(--cerulean);color:white;}
+.btn-danger{background:var(--danger);color:white;}
+.btn-sm{padding:5px 12px;font-size:0.8rem;}
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:16px;margin-bottom:24px;}
+.stat-box{background:white;border-radius:10px;border:1px solid var(--border);padding:16px;text-align:center;box-shadow:var(--card-shadow);}
+.stat-box .stat-num{font-family:'Rajdhani',sans-serif;font-size:2.4rem;font-weight:700;color:var(--cerulean);line-height:1;}
+.stat-box .stat-label{font-size:0.78rem;color:var(--text-muted);font-weight:600;margin-top:4px;text-transform:uppercase;letter-spacing:0.5px;}
+.stat-box.open .stat-num{color:var(--warning);}
+.stat-box.closed .stat-num{color:var(--success);}
+.stat-box.progress .stat-num{color:var(--info);}
+/* CHART */
+.chart-container{position:relative;height:280px;}
+.period-btns{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;}
+.period-btn{background:var(--surface);border:1px solid var(--border);color:var(--text-muted);padding:5px 13px;border-radius:20px;font-size:0.8rem;font-weight:600;cursor:pointer;transition:all 0.2s;}
+.period-btn.active{background:var(--cerulean);color:white;border-color:var(--cerulean);}
+/* FILE */
+.file-drop{border:2px dashed var(--cerulean);border-radius:8px;padding:20px;text-align:center;cursor:pointer;transition:background 0.2s;color:var(--text-muted);font-size:0.88rem;}
+.file-drop:hover{background:var(--cerulean-pale);}
+.file-drop.has-file{background:var(--cerulean-pale);border-color:var(--cerulean-dark);color:var(--cerulean-dark);font-weight:600;}
+/* TABLE */
+.table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:8px;}
+table{width:100%;border-collapse:collapse;font-size:0.88rem;}
+thead{background:var(--cerulean);color:white;}
+th{padding:10px 12px;text-align:left;font-family:'Rajdhani',sans-serif;font-size:0.9rem;font-weight:600;letter-spacing:0.3px;white-space:nowrap;}
+td{padding:9px 12px;border-bottom:1px solid var(--border);vertical-align:middle;}
+tr:hover td{background:var(--surface);}
+.req-id-link{color:var(--cerulean);font-weight:700;cursor:pointer;text-decoration:underline;}
+/* BADGE */
+.badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:0.78rem;font-weight:700;letter-spacing:0.3px;}
+.badge-open{background:#FFF3CD;color:#856404;}
+.badge-closed{background:#D4EDDA;color:#155724;}
+.badge-progress{background:#CCE5FF;color:#004085;}
+.badge-notready{background:#F8D7DA;color:#721c24;}
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:2000;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.open{display:flex;}
+.modal{background:white;border-radius:14px;max-width:680px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.3);}
+.modal-header{background:linear-gradient(90deg,var(--cerulean-deep),var(--cerulean));color:white;padding:16px 20px;display:flex;justify-content:space-between;align-items:center;}
+.modal-header h3{font-family:'Rajdhani',sans-serif;font-size:1.2rem;font-weight:700;}
+.modal-close{background:none;border:none;color:white;font-size:1.5rem;cursor:pointer;line-height:1;}
+.modal-body{padding:20px;}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.detail-item .d-label{font-size:0.78rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.4px;}
+.detail-item .d-value{font-size:0.92rem;color:var(--text);margin-top:2px;}
+.detail-item.full{grid-column:1/-1;}
+/* LOGIN */
+#loginModal .modal{max-width:380px;}
+.login-form{display:flex;flex-direction:column;gap:14px;}
+.login-err{color:var(--danger);font-size:0.85rem;text-align:center;display:none;}
+/* ALERT */
+.alert{padding:12px 16px;border-radius:8px;margin-bottom:16px;font-size:0.9rem;display:none;}
+.alert.show{display:block;}
+.alert-success{background:#D4EDDA;color:#155724;border:1px solid #C3E6CB;}
+.alert-danger{background:#F8D7DA;color:#721c24;border:1px solid #F5C6CB;}
+.alert-info{background:#CCE5FF;color:#004085;border:1px solid #B8DAFF;}
+/* SPINNER */
+.spinner{display:inline-block;width:18px;height:18px;border:2px solid rgba(255,255,255,0.4);border-top-color:white;border-radius:50%;animation:spin 0.7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+/* SETTINGS */
+.exec-row{display:flex;gap:10px;align-items:center;margin-bottom:8px;}
+.exec-row input{flex:1;}
+.separator{border:none;border-top:1.5px solid var(--border);margin:20px 0;}
+/* SUCCESS MODAL */
+#successModal .modal{max-width:440px;text-align:center;}
+.success-req-id{font-family:'Rajdhani',sans-serif;font-size:2rem;font-weight:900;color:var(--cerulean-dark);letter-spacing:1px;background:var(--surface);border:2px solid var(--cerulean);border-radius:10px;padding:12px 20px;margin:14px 0;}
+/* FOOTER */
+footer{background:var(--cerulean-deep);color:rgba(255,255,255,0.55);text-align:center;padding:10px 20px;font-size:0.78rem;letter-spacing:0.3px;margin-top:20px;}
+footer .creator{color:var(--gold);font-weight:700;}
+/* RESPONSIVE */
+/* ===== MOBILE & TABLET RESPONSIVE ===== */
+
+/* Tablet (max 900px) */
+@media(max-width:900px){
+  .header-title h1{font-size:1.2rem;}
+  main{padding:20px 14px;}
+  .stats-grid{grid-template-columns:repeat(2,1fr);}
+  .form-grid{grid-template-columns:repeat(auto-fill,minmax(240px,1fr));}
+  .test-checks{grid-template-columns:repeat(auto-fill,minmax(200px,1fr));}
+}
+
+/* Mobile (max 640px) */
+@media(max-width:640px){
+  /* Header */
+  header{height:auto;min-height:60px;padding:8px 12px;flex-wrap:nowrap;}
+  .header-logos img{height:36px;padding:3px 5px;}
+  .header-title h1{font-size:0.82rem;letter-spacing:0.5px;line-height:1.2;}
+  .header-title p{font-size:0.65rem;}
+  .btn-login{padding:5px 10px;font-size:0.78rem;}
+  #userBadge .avatar{width:26px;height:26px;font-size:0.78rem;}
+
+  /* Nav */
+  nav button{padding:10px 12px;font-size:0.82rem;}
+
+  /* Main */
+  main{padding:12px 10px;}
+
+  /* Cards */
+  .card-header{font-size:0.95rem;padding:11px 14px;}
+  .card-body{padding:14px;}
+
+  /* Stats grid - 2 columns on mobile */
+  .stats-grid{grid-template-columns:repeat(2,1fr);gap:10px;}
+  .stat-box{padding:12px 8px;}
+  .stat-box .stat-num{font-size:1.9rem;}
+  .stat-box .stat-label{font-size:0.7rem;}
+
+  /* Period buttons - scrollable row */
+  .period-btns{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch;}
+  .period-btn{flex-shrink:0;padding:4px 11px;font-size:0.76rem;}
+
+  /* Chart */
+  .chart-container{height:220px;}
+
+  /* Forms - single column */
+  .form-grid{grid-template-columns:1fr;}
+  .form-group.full{grid-column:1;}
+  label{font-size:0.82rem;}
+  input[type="text"],input[type="date"],input[type="time"],input[type="email"],input[type="number"],select,textarea{padding:8px 10px;font-size:0.88rem;}
+
+  /* Test checkboxes - single column */
+  .test-checks{grid-template-columns:1fr;}
+  .test-category h4{font-size:0.85rem;}
+
+  /* Buttons */
+  .btn{padding:9px 16px;font-size:0.85rem;}
+  .btn-sm{padding:5px 10px;font-size:0.76rem;}
+
+  /* Tables - horizontal scroll */
+  .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+  table{min-width:600px;font-size:0.8rem;}
+  th{padding:8px 8px;font-size:0.8rem;}
+  td{padding:7px 8px;}
+
+  /* Modals - full screen on mobile */
+  .modal-overlay{padding:0;align-items:flex-end;}
+  .modal{border-radius:16px 16px 0 0;max-height:92vh;max-width:100%;}
+  #loginModal .modal{border-radius:16px 16px 0 0;max-width:100%;}
+  .modal-header{padding:13px 16px;}
+  .modal-body{padding:14px;}
+  .detail-grid{grid-template-columns:1fr;}
+  .detail-item .d-label{font-size:0.72rem;}
+  .detail-item .d-value{font-size:0.86rem;}
+
+  /* Footer */
+  footer{font-size:0.7rem;padding:8px 12px;flex-direction:column;gap:2px;}
+
+  /* File drop */
+  .file-drop{padding:14px;font-size:0.82rem;}
+
+  /* Exec rows in settings */
+  .exec-row{flex-wrap:wrap;}
+  .exec-row input{min-width:0;}
+}
+
+/* Small mobile (max 380px) */
+@media(max-width:380px){
+  header{padding:6px 8px;}
+  .header-logos img{height:30px;}
+  .header-title h1{font-size:0.72rem;}
+  nav button{padding:9px 10px;font-size:0.76rem;}
+  .stats-grid{grid-template-columns:repeat(2,1fr);gap:7px;}
+  .stat-box .stat-num{font-size:1.6rem;}
+  main{padding:10px 8px;}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="header-logos">
+    <img src="data:image/png;base64,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" alt="NTPC Logo">
+  </div>
+  <div class="header-title">
+    <h1><span>QARP</span> – QUALITY ASSURANCE REQUEST PORTAL</h1>
+    <p style="font-size:0.72rem;color:var(--cerulean-light);letter-spacing:1px;font-style:italic;margin-bottom:1px">Track. Verify. Approve.</p>
+    <p>FQA Department &nbsp;|&nbsp; NTPC Dadri</p>
+  </div>
+  <div class="header-right">
+    <div style="display:flex;align-items:center;margin-right:4px">
+      <img src="data:image/png;base64,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" alt="Dadri Logo" style="height:52px;width:auto;object-fit:contain;background:white;border-radius:6px;padding:4px 8px;">
+    </div>
+    <div id="userBadge">
+      <div class="avatar" id="userInitial">A</div>
+      <button class="btn-logout" onclick="logout()">Logout</button>
+    </div>
+    <button class="btn-login" onclick="openModal('loginModal')" id="loginBtn">🔒 Admin Login</button>
+  </div>
+</header>
+
+<!-- NAV -->
+<nav>
+  <button class="active" onclick="showSection('dashboard')">📊 Dashboard</button>
+  <button onclick="showSection('lab')">🧪 Lab Services</button>
+  <button onclick="showSection('witness')">👁 Witness Services</button>
+  <button onclick="showSection('requests')" id="allReqNav" style="display:none">📋 All Requests</button>
+  <button onclick="showSection('settings')" id="adminNav" style="display:none">⚙️ Admin Settings</button>
+</nav>
+
+<main>
+
+<!-- DASHBOARD -->
+<div class="section active" id="dashboard">
+  <div id="dashAlert" class="alert"></div>
+  <div class="card">
+    <div class="card-header">📊 Dashboard — Service Request Overview
+      <span id="adminChartToggle" style="display:none;margin-left:auto">
+        <button class="btn btn-sm" style="background:rgba(255,255,255,0.2);color:white;border:none;cursor:pointer" onclick="toggleChart()">Toggle Chart</button>
+      </span>
+    </div>
+    <div class="card-body">
+      <div class="period-btns" id="periodBtns">
+        <button class="period-btn active" onclick="setPeriod('daily',this)">Daily</button>
+        <button class="period-btn" onclick="setPeriod('weekly',this)">Weekly</button>
+        <button class="period-btn" onclick="setPeriod('fortnightly',this)">Fortnightly</button>
+        <button class="period-btn" onclick="setPeriod('monthly',this)">Monthly</button>
+        <button class="period-btn" onclick="setPeriod('quarterly',this)">Quarterly</button>
+        <button class="period-btn" onclick="setPeriod('annually',this)">Annually</button>
+      </div>
+      <h4 style="font-family:Rajdhani,sans-serif;color:var(--cerulean);margin-bottom:10px">🧪 Lab Services</h4>
+      <div class="stats-grid" id="labStats"></div>
+      <h4 style="font-family:Rajdhani,sans-serif;color:var(--cerulean);margin-bottom:10px;margin-top:8px">👁 Witness Services</h4>
+      <div class="stats-grid" id="witnessStats"></div>
+      <div id="chartWrap" style="margin-top:20px;display:flex;gap:20px;justify-content:center;align-items:flex-start;flex-wrap:wrap">
+        <div style="flex:1;min-width:220px;max-width:320px;text-align:center">
+          <div style="font-family:Rajdhani,sans-serif;font-weight:700;color:var(--cerulean);font-size:0.95rem;margin-bottom:8px">🧪 LAB SERVICES</div>
+          <canvas id="labChart"></canvas>
+          <div id="labLegend" style="margin-top:8px;font-size:0.8rem;display:flex;flex-wrap:wrap;justify-content:center;gap:8px"></div>
+        </div>
+        <div style="flex:1;min-width:220px;max-width:320px;text-align:center">
+          <div style="font-family:Rajdhani,sans-serif;font-weight:700;color:#FF6B35;font-size:0.95rem;margin-bottom:8px">👁 WITNESS SERVICES</div>
+          <canvas id="witnessChart"></canvas>
+          <div id="witnessLegend" style="margin-top:8px;font-size:0.8rem;display:flex;flex-wrap:wrap;justify-content:center;gap:8px"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Admin all requests table -->
+  <div class="card">
+    <div class="card-header">📋 All Requests (Admin View)</div>
+    <div class="card-body" id="adminReqTable" style="display:none">
+      <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin-bottom:14px">
+        <div class="form-group" style="margin:0">
+          <label>Filter by Date</label>
+          <input type="date" id="adminFilterDate" onchange="loadAdminRequests()">
+        </div>
+        <select id="adminFilterPeriod" onchange="loadAdminRequests()" style="border:1.5px solid var(--border);border-radius:7px;padding:8px 10px;font-size:0.85rem;font-family:Source Sans 3,sans-serif">
+          <option value="">All Time</option>
+          <option value="daily">Today</option>
+          <option value="weekly">This Week</option>
+          <option value="monthly">This Month</option>
+          <option value="annually">This Year</option>
+        </select>
+        <button class="btn btn-outline btn-sm" onclick="clearAdminFilters()">✕ Clear</button>
+        <button class="btn btn-sm btn-primary" style="margin-left:auto" onclick="loadAdminRequests()">🔄 Refresh</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Request ID</th><th>Type</th><th>Dept</th><th>Requester</th><th>Status</th><th>Assigned To</th><th>Submitted</th><th>Action</th></tr></thead>
+          <tbody id="allReqBody"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card-body" id="adminReqMsg">
+      <p style="color:var(--text-muted);text-align:center;padding:20px">🔒 Log in as administrator to manage all requests.</p>
+    </div>
+  </div>
+</div>
+
+<!-- LAB SERVICES -->
+<div class="section" id="lab">
+  <div id="labAlert" class="alert"></div>
+  <div class="card">
+    <div class="card-header">🧪 Lab Service Request</div>
+    <div class="card-body">
+      <div id="labTestsContainer"></div>
+      <div class="form-group" style="margin-top:12px">
+        <label>Any Other Test (specify):</label>
+        <input type="text" id="otherTest" placeholder="Describe any additional test requirement...">
+      </div>
+      <hr class="separator">
+      <div class="form-grid">
+        <div class="form-group"><label>Sample / Material Description <span class="req">*</span></label><input type="text" id="labSampleDesc" placeholder="e.g., Concrete Cube M25"></div>
+        <div class="form-group"><label>Date of Sampling <span class="req">*</span></label><input type="date" id="labSamplingDate"></div>
+        <div class="form-group"><label>Number of Samples / Lot Quantity <span class="req">*</span></label><input type="number" id="labNumSamples" placeholder="e.g., 3"></div>
+        <div class="form-group"><label>PO Number (10 digits) <span class="req">*</span></label><input type="text" id="labPO" placeholder="10-digit PO Number" maxlength="10"></div>
+        <div class="form-group"><label>Purpose of Material <span class="req">*</span></label><input type="text" id="labPurpose" placeholder="e.g., Foundation work Unit-7"></div>
+        <div class="form-group"><label>User Department <span class="req">*</span></label><select id="labDept"><option value="">-- Select Department --</option></select></div>
+        <div class="form-group"><label>EIC / Site Engineer</label><input type="text" id="labEIC" placeholder="Name of Engineer"></div>
+        <div class="form-group"><label>Your Name <span class="req">*</span></label><input type="text" id="labName" placeholder="Your full name"></div>
+        <div class="form-group"><label>Your Email</label><input type="email" id="labEmail" placeholder="your.email@ntpc.co.in"></div>
+        <div class="form-group full"><label>Special Instructions / Remarks</label><textarea id="labRemarks" placeholder="Any specific requirements or instructions..."></textarea></div>
+        <div class="form-group full">
+          <label>Upload Document (Requisition / Protocol / Committee Note etc.)</label>
+          <div class="file-drop" id="labFileDrop" onclick="document.getElementById('labFile').click()">📎 Click to upload or drag &amp; drop (PDF, DOC, DOCX, JPG, PNG — max 10MB)</div>
+          <input type="file" id="labFile" style="display:none" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" onchange="handleFileSelect(this,'labFileDrop')">
+        </div>
+      </div>
+      <div style="margin-top:18px;display:flex;gap:12px;align-items:center">
+        <button class="btn btn-primary" onclick="submitLabRequest()" id="labSubmitBtn">📨 Submit Lab Request</button>
+        <button class="btn btn-outline" onclick="resetForm('lab')">🔄 Reset</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- WITNESS SERVICES -->
+<div class="section" id="witness">
+  <div id="witnessAlert" class="alert"></div>
+  <div class="card">
+    <div class="card-header">👁 Witness Service Request</div>
+    <div class="card-body">
+      <div class="form-grid">
+        <div class="form-group"><label>Service Category <span class="req">*</span></label><select id="witnessType"><option value="">-- Select Category --</option><option>Mechanical</option><option>Electrical / C&amp;I</option><option>Civil</option><option>Others</option></select></div>
+        <div class="form-group"><label>User Department <span class="req">*</span></label><select id="witnessDept"><option value="">-- Select Department --</option></select></div>
+        <div class="form-group full"><label>Activity / Work to be Witnessed <span class="req">*</span></label><textarea id="witnessActivity" placeholder="Describe the work/activity to be witnessed..."></textarea></div>
+        <div class="form-group"><label>Schedule Date <span class="req">*</span></label><input type="date" id="witnessDate"></div>
+        <div class="form-group"><label>Schedule Time <span class="req">*</span></label><input type="time" id="witnessTime"></div>
+        <div class="form-group"><label>Location of Job <span class="req">*</span></label><input type="text" id="witnessLocation" placeholder="e.g., Unit-6 TG Hall"></div>
+        <div class="form-group"><label>Equipment (if applicable)</label><input type="text" id="witnessEquipment" placeholder="e.g., TG-6A, PA Fan"></div>
+        <div class="form-group"><label>PO Number</label><input type="text" id="witnessPO" placeholder="PO Number (if applicable)"></div>
+        <div class="form-group"><label>EIC / Site Engineer</label><input type="text" id="witnessEIC" placeholder="Name of Engineer"></div>
+        <div class="form-group"><label>Any Specific Tools / Tackles Required</label><input type="text" id="witnessTools" placeholder="e.g., Vernier caliper, Dial gauge"></div>
+        <div class="form-group"><label>Your Name <span class="req">*</span></label><input type="text" id="witnessName" placeholder="Your full name"></div>
+        <div class="form-group"><label>Your Email</label><input type="email" id="witnessEmail" placeholder="your.email@ntpc.co.in"></div>
+        <div class="form-group full"><label>Special Instructions / Remarks</label><textarea id="witnessRemarks" placeholder="Any specific instructions..."></textarea></div>
+        <div class="form-group full">
+          <label>Upload Reference Document</label>
+          <div class="file-drop" id="witnessFileDrop" onclick="document.getElementById('witnessFile').click()">📎 Click to upload or drag &amp; drop (PDF, DOC, DOCX, JPG, PNG — max 10MB)</div>
+          <input type="file" id="witnessFile" style="display:none" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" onchange="handleFileSelect(this,'witnessFileDrop')">
+        </div>
+      </div>
+      <div style="margin-top:18px;display:flex;gap:12px;align-items:center">
+        <button class="btn btn-primary" onclick="submitWitnessRequest()" id="witnessSubmitBtn">📨 Submit Witness Request</button>
+        <button class="btn btn-outline" onclick="resetForm('witness')">🔄 Reset</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ALL REQUESTS (Admin) -->
+<div class="section" id="requests">
+  <div id="reqAlert" class="alert"></div>
+  <div class="card">
+    <div class="card-header">📋 All Submitted Requests
+      <button class="btn btn-sm" style="margin-left:auto;background:rgba(255,255,255,0.2);color:white;border:none;cursor:pointer" onclick="loadAdminRequests()">🔄 Refresh</button>
+    </div>
+    <div class="card-body">
+      <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin-bottom:14px">
+        <div class="form-group" style="margin:0">
+          <label>Filter by Date</label>
+          <input type="date" id="filterDate" onchange="loadMyRequests()">
+        </div>
+        <select id="filterPeriod" onchange="loadMyRequests()" style="border:1.5px solid var(--border);border-radius:7px;padding:8px 10px;font-size:0.85rem;font-family:Source Sans 3,sans-serif">
+          <option value="">All Time</option>
+          <option value="daily">Today</option>
+          <option value="weekly">This Week</option>
+          <option value="monthly">This Month</option>
+          <option value="annually">This Year</option>
+        </select>
+        <button class="btn btn-outline btn-sm" onclick="clearReqFilters()">✕ Clear</button>
+      </div>
+      <div class="table-wrap">
+        <table><thead><tr><th>Request ID</th><th>Type</th><th>Dept</th><th>Requester</th><th>Status</th><th>Assigned To</th><th>Submitted</th><th>Details</th></tr></thead>
+        <tbody id="myReqBody"></tbody></table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN SETTINGS -->
+<div class="section" id="settings">
+  <div id="settingsAlert" class="alert"></div>
+  <div class="card">
+    <div class="card-header">👤 FQA Executives Management</div>
+    <div class="card-body">
+      <div id="execList"></div>
+      <button class="btn btn-outline btn-sm" onclick="addExecRow()">➕ Add Executive</button>
+      <button class="btn btn-primary btn-sm" style="margin-left:10px" onclick="saveExecutives()">💾 Save Executives</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header">🧪 Lab Tests Management</div>
+    <div class="card-body">
+      <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:14px">Add, remove, or toggle lab tests.</p>
+      <div id="labTestsMgmt"></div>
+      <button class="btn btn-outline btn-sm" onclick="addTestRow()">➕ Add Test</button>
+      <button class="btn btn-primary btn-sm" style="margin-left:10px" onclick="saveLabTestsAdmin()">💾 Save Tests</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header">🔧 Apps Script URL</div>
+    <div class="card-body">
+      <label>Web App URL:</label>
+      <div style="display:flex;gap:10px;margin-top:8px">
+        <input type="text" id="scriptUrlInput" placeholder="https://script.google.com/macros/s/.../exec" style="flex:1">
+        <button class="btn btn-primary btn-sm" onclick="saveScriptUrl()">Save URL</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<!-- FOOTER -->
+<footer>
+  QARP Portal &nbsp;|&nbsp; FQA Department, NTPC Dadri &nbsp;&nbsp;
+  <span class="creator">✦ Created by Hiteshkumar A. Singh</span>
+</footer>
+
+<!-- SUCCESS MODAL -->
+<div class="modal-overlay" id="successModal">
+  <div class="modal">
+    <div class="modal-header" style="background:linear-gradient(90deg,#1a7a3c,#2ecc71);justify-content:center">
+      <h3>✅ Request Submitted Successfully!</h3>
+    </div>
+    <div class="modal-body" style="text-align:center;padding:28px 24px">
+      <div style="font-size:3rem;margin-bottom:12px">🎉</div>
+      <p style="font-size:0.95rem;color:var(--text-muted);margin-bottom:18px">Your request has been received by FQA Department, NTPC Dadri</p>
+      <div class="success-req-id" id="successReqId"></div>
+      <div id="successDateTime" style="font-size:0.82rem;color:var(--text-muted);margin-bottom:14px"></div>
+      <div id="successEmailNote" style="font-size:0.85rem;color:#155724;background:#d4edda;border-radius:8px;padding:10px;margin-bottom:18px"></div>
+      <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:18px">📌 Please save your Request ID for future reference.</p>
+      <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="closeModal('successModal')">OK, Got it!</button>
+    </div>
+  </div>
+</div>
+
+<!-- LOGIN MODAL -->
+<div class="modal-overlay" id="loginModal">
+  <div class="modal">
+    <div class="modal-header"><h3>🔒 Administrator Login</h3><button class="modal-close" onclick="closeModal('loginModal')">✕</button></div>
+    <div class="modal-body">
+      <div class="login-form">
+        <div class="form-group"><label>User ID (case-insensitive)</label><input type="text" id="loginUser" placeholder="DADRIFQA"></div>
+        <div class="form-group"><label>Password</label><input type="password" id="loginPass" placeholder="Password" onkeydown="if(event.key==='Enter')doLogin()"></div>
+        <div class="login-err" id="loginErr">❌ Invalid credentials. Please try again.</div>
+        <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="doLogin()">Login</button>
+        <div style="text-align:center;margin-top:8px">
+          <a href="mailto:dadrifqa@gmail.com?subject=QARP Portal - Forgot Password&body=Please reset my QARP Portal administrator password." style="font-size:0.82rem;color:var(--cerulean);text-decoration:underline">🔑 Forgot Password?</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DETAIL MODAL -->
+<div class="modal-overlay" id="detailModal">
+  <div class="modal" style="max-width:740px">
+    <div class="modal-header"><h3 id="detailReqId">Request Details</h3><button class="modal-close" onclick="closeModal('detailModal')">✕</button></div>
+    <div class="modal-body" id="detailBody"></div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+const ADMIN_USER='dadrifqa', ADMIN_PASS='Ntpc@1234';
+const DEPARTMENTS=['BMD','TMD','EMD','OFFSITE MAINT.','AHP','CHP','C&I MAINT.','O&M – CIVIL','TA – CIVIL','TA – ELECT','STORES','CHEMISTRY','FGD','MTP','Operation','Gas – Mech. Maint.','Gas – Elect. Maint.','Gas – C&I Maint.','Gas-MTP','Gas-Operation','OTHERS'];
+let isAdmin=false, scriptUrl='https://script.google.com/macros/s/AKfycbyjoeOlLlb6EXGsckorFigGb8KXlcyoSK9wsGCU1AHtlX6jQDeU_xCq4MAnSFvHAqq3CQ/exec', currentPeriod='daily', statsChart=null, allRequests=[], labTestsData=[], executivesData=[], chartVisible=true;
+
+document.addEventListener('DOMContentLoaded',()=>{
+  populateDepts(); setMinWitnessDate(); loadScriptUrlInput(); loadFromBackend();
+  setInterval(()=>{ if(document.getElementById('dashboard').classList.contains('active')){ loadStats(); if(isAdmin)loadAdminRequests(); }}, 5*60*1000);
+});
+
+function loadFromBackend(){
+  if(!scriptUrl){loadDefaultLabTests();return;}
+  fetchFromSheet('getLabTests',{}).then(r=>{if(r&&r.success){labTestsData=r.data;renderLabTests();renderLabTestsMgmt();}else loadDefaultLabTests();}).catch(()=>loadDefaultLabTests());
+  fetchFromSheet('getExecutives',{}).then(r=>{if(r&&r.success)executivesData=r.data;});
+  loadStats();
+}
+
+async function fetchFromSheet(action,payload){
+  if(!scriptUrl)return null;
+  try{
+    const p=payload?encodeURIComponent(JSON.stringify(payload)):encodeURIComponent('{}');
+    const url=scriptUrl+'?action='+action+'&payload='+p+'&t='+Date.now();
+    const res=await fetch(url,{method:'GET',redirect:'follow'});
+    const text=await res.text();
+    try{return JSON.parse(text);}catch(e){console.error('Parse error:',text);return null;}
+  }catch(err){console.error('API error:',err);return null;}
+}
+
+function showSection(id){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+  const navMap={'dashboard':0,'lab':1,'witness':2,'requests':3,'settings':4};
+  const btns=document.querySelectorAll('nav button');
+  // match by text content
+  btns.forEach(b=>{const t=b.textContent.toLowerCase();if(t.includes(id.substring(0,4)))b.classList.add('active');});
+  if(id==='dashboard'){loadStats();if(isAdmin)loadAdminRequests();}
+  if(id==='requests')loadMyRequests();
+  if(id==='settings'&&isAdmin)loadSettingsPanel();
+}
+
+function populateDepts(){
+  ['labDept','witnessDept'].forEach(id=>{
+    const sel=document.getElementById(id);
+    DEPARTMENTS.forEach(d=>{const o=document.createElement('option');o.value=d;o.textContent=d;sel.appendChild(o);});
+  });
+}
+
+function setMinWitnessDate(){
+  const t=new Date();t.setDate(t.getDate()+1);
+  const min=t.toISOString().split('T')[0];
+  document.getElementById('witnessDate').min=min;
+  document.getElementById('witnessDate').value=min;
+}
+
+// STATS
+async function loadStats(retryCount){
+  retryCount=retryCount||0;
+  document.getElementById('labStats').innerHTML='<div style="color:var(--text-muted);font-size:0.85rem;padding:8px">Loading...</div>';
+  document.getElementById('witnessStats').innerHTML='<div style="color:var(--text-muted);font-size:0.85rem;padding:8px">Loading...</div>';
+  if(!scriptUrl){renderStatBoxes('labStats',{total:0,open:0,closed:0,inProgress:0});renderStatBoxes('witnessStats',{total:0,open:0,closed:0,inProgress:0});return;}
+  try{
+    const r=await fetchFromSheet('getStats',{period:currentPeriod});
+    if(r&&r.success&&r.data){renderStatBoxes('labStats',r.data.lab);renderStatBoxes('witnessStats',r.data.witness);renderChart(r.data);}
+    else if(retryCount<3)setTimeout(()=>loadStats(retryCount+1),2000);
+    else{renderStatBoxes('labStats',{total:0,open:0,closed:0,inProgress:0});renderStatBoxes('witnessStats',{total:0,open:0,closed:0,inProgress:0});}
+  }catch(err){if(retryCount<3)setTimeout(()=>loadStats(retryCount+1),2000);}
+}
+
+function renderStatBoxes(id,s){
+  document.getElementById(id).innerHTML=
+    '<div class="stat-box"><div class="stat-num">'+(s.total||0)+'</div><div class="stat-label">Total</div></div>'+
+    '<div class="stat-box open"><div class="stat-num">'+(s.open||0)+'</div><div class="stat-label">Open</div></div>'+
+    '<div class="stat-box closed"><div class="stat-num">'+(s.closed||0)+'</div><div class="stat-label">Closed</div></div>'+
+    '<div class="stat-box progress"><div class="stat-num">'+(s.inProgress||0)+'</div><div class="stat-label">In Progress</div></div>';
+}
+
+function setPeriod(p,btn){currentPeriod=p;document.querySelectorAll('.period-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');loadStats();}
+function toggleChart(){chartVisible=!chartVisible;document.getElementById('chartWrap').style.display=chartVisible?'block':'none';}
+
+function renderChart(stats){
+  if(!chartVisible||!stats)return;
+  // Destroy old charts
+  if(Array.isArray(statsChart)){statsChart.forEach(c=>{try{c.destroy();}catch(e){}});}
+  else if(statsChart){try{statsChart.destroy();}catch(e){}}
+  statsChart=[];
+
+  const COLORS=['#f39c12','#2ecc71','#3498db'];
+  const LABELS=['Open','Closed','In Progress'];
+
+  function makeDonut(canvasId, data, total, legendId, centerColor){
+    const ctx=document.getElementById(canvasId);
+    if(!ctx)return null;
+    const isEmpty=total===0;
+    const c=new Chart(ctx,{
+      type:'doughnut',
+      data:{
+        labels:isEmpty?['No Data']:LABELS,
+        datasets:[{
+          data:isEmpty?[1]:data,
+          backgroundColor:isEmpty?['#e8e8e8']:COLORS,
+          borderWidth:isEmpty?0:3,
+          borderColor:'#fff',
+          hoverOffset:8
+        }]
+      },
+      options:{
+        responsive:true,
+        maintainAspectRatio:true,
+        cutout:'62%',
+        animation:{animateRotate:true,duration:800},
+        plugins:{
+          legend:{display:false},
+          tooltip:{enabled:!isEmpty,callbacks:{label:function(c){return ' '+c.label+': '+c.raw+(total>0?' ('+Math.round(c.raw/total*100)+'%)':'');}}}
+        }
+      },
+      plugins:[{id:'ct',beforeDraw(chart){
+        const{ctx,chartArea}=chart;
+        if(!chartArea)return;
+        const cx=chartArea.left+chartArea.width/2;
+        const cy=chartArea.top+chartArea.height/2;
+        ctx.save();
+        ctx.font='bold 1.8rem Rajdhani,sans-serif';
+        ctx.fillStyle=centerColor||'#0077B6';
+        ctx.textAlign='center';ctx.textBaseline='middle';
+        ctx.fillText(isEmpty?'0':total,cx,cy-8);
+        ctx.font='0.65rem Source Sans 3,sans-serif';
+        ctx.fillStyle='#5A7A9A';
+        ctx.fillText('TOTAL',cx,cy+12);
+        ctx.restore();
+      }}]
+    });
+    // Legend
+    const el=document.getElementById(legendId);
+    if(el)el.innerHTML=LABELS.map((l,i)=>
+      '<span style="display:inline-flex;align-items:center;gap:3px">'+
+      '<span style="width:10px;height:10px;border-radius:50%;background:'+COLORS[i]+';display:inline-block"></span>'+
+      l+': <strong>'+(data[i]||0)+'</strong></span>').join('');
+    return c;
+  }
+
+  const labData=[stats.lab.open||0,stats.lab.closed||0,stats.lab.inProgress||0];
+  const witData=[stats.witness.open||0,stats.witness.closed||0,stats.witness.inProgress||0];
+  statsChart.push(makeDonut('labChart',labData,stats.lab.total||0,'labLegend','#0077B6'));
+  statsChart.push(makeDonut('witnessChart',witData,stats.witness.total||0,'witnessLegend','#FF6B35'));
+}
+
+// LAB TESTS
+function renderLabTests(){
+  const cats={};
+  labTestsData.filter(t=>t.active!==false&&t.active!=='false').forEach(t=>{if(!cats[t.category])cats[t.category]=[];cats[t.category].push(t.test);});
+  document.getElementById('labTestsContainer').innerHTML=Object.entries(cats).map(([cat,tests])=>
+    '<div class="test-category"><h4>'+cat+'</h4><div class="test-checks">'+
+    tests.map(t=>'<label class="check-item"><input type="checkbox" name="labTest" value="'+t+'"><span>'+t+'</span></label>').join('')+
+    '</div></div>').join('');
+}
+
+function loadDefaultLabTests(){
+  labTestsData=[
+    {category:'CONCRETE AGGREGATE',test:'Compressive Strength of Concrete Cube',active:true},
+    {category:'CONCRETE AGGREGATE',test:'Sieve Analysis for Coarse Aggregate',active:true},
+    {category:'CONCRETE AGGREGATE',test:'Sieve Analysis for Fine Aggregate',active:true},
+    {category:'CONCRETE AGGREGATE',test:'Water Absorption / Moisture Content',active:true},
+    {category:'CONCRETE AGGREGATE',test:'Flakiness Index',active:true},
+    {category:'CONCRETE AGGREGATE',test:'Aggregate Impact Value',active:true},
+    {category:'CONCRETE AGGREGATE',test:'Aggregate Abrasion Value',active:true},
+    {category:'CONCRETE AGGREGATE',test:'Elongation Index',active:true},
+    {category:'BRICKS',test:'Dimensional Test',active:true},
+    {category:'BRICKS',test:'Water Absorption',active:true},
+    {category:'BRICKS',test:'Crushing Strength',active:true},
+    {category:'BRICKS',test:'Efflorescence',active:true},
+    {category:'SOIL',test:'Standard Proctor Test',active:true},
+    {category:'SOIL',test:'Field Compaction Test',active:true},
+    {category:'CEMENT',test:'Consistency',active:true},
+    {category:'CEMENT',test:'Setting Time',active:true},
+    {category:'CEMENT',test:'Cube Making Testing of Cross Section',active:true},
+    {category:'MECHANICAL TESTS',test:'Bend Test',active:true},
+    {category:'MECHANICAL TESTS',test:'Tensile Strength',active:true},
+    {category:'MECHANICAL TESTS',test:'Yield Stress',active:true},
+    {category:'MECHANICAL TESTS',test:'Determination of Weight',active:true},
+    {category:'MECHANICAL TESTS',test:'Tube Flattening Test',active:true},
+    {category:'MECHANICAL TESTS',test:'Ultrasonic Test',active:true},
+    {category:'MECHANICAL TESTS',test:'Radiography Test',active:true},
+    {category:'OTHER TESTS',test:'Dimensional',active:true},
+    {category:'OTHER TESTS',test:'Thickness',active:true},
+    {category:'OTHER TESTS',test:'Unit Weight',active:true},
+    {category:'OTHER TESTS',test:'Hardness Test',active:true},
+  ];
+  renderLabTests();renderLabTestsMgmt();
+}
+
+// FILE
+function handleFileSelect(input,dropId){
+  const file=input.files[0];if(!file)return;
+  const drop=document.getElementById(dropId);
+  drop.textContent='✅ '+file.name+' ('+(file.size/1024/1024).toFixed(2)+' MB)';
+  drop.classList.add('has-file');
+}
+async function uploadFileToServer(inputId){
+  const input=document.getElementById(inputId);
+  if(!input.files[0]||!scriptUrl)return null;
+  const file=input.files[0];
+  return new Promise(resolve=>{
+    const reader=new FileReader();
+    reader.onload=async()=>{
+      const base64=reader.result.split(',')[1];
+      // Use POST for file upload - base64 too large for GET URL
+      try{
+        const res=await fetch(scriptUrl,{
+          method:'POST',
+          body:JSON.stringify({action:'uploadFile',payload:{fileData:base64,mimeType:file.type,fileName:file.name}}),
+          headers:{'Content-Type':'text/plain'},
+          redirect:'follow'
+        });
+        const text=await res.text();
+        const r=JSON.parse(text);
+        resolve(r&&r.success?r.fileUrl:null);
+      }catch(err){console.error('Upload error:',err);resolve(null);}
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+// SUBMIT LAB
+async function submitLabRequest(){
+  const checks=[...document.querySelectorAll('input[name="labTest"]:checked')].map(c=>c.value);
+  const otherTest=document.getElementById('otherTest').value.trim();
+  const tests=[...checks,...(otherTest?['Other: '+otherTest]:[])];
+  const data={type:'Lab',department:document.getElementById('labDept').value,requesterName:document.getElementById('labName').value.trim(),requesterEmail:document.getElementById('labEmail').value.trim(),tests,sampleDescription:document.getElementById('labSampleDesc').value.trim(),dateOfSampling:document.getElementById('labSamplingDate').value,numSamples:document.getElementById('labNumSamples').value,poNumber:document.getElementById('labPO').value.trim(),purpose:document.getElementById('labPurpose').value.trim(),eicEngineer:document.getElementById('labEIC').value.trim(),specialInstructions:document.getElementById('labRemarks').value.trim()};
+  if(!validate(data,['department','requesterName','sampleDescription','dateOfSampling','numSamples','poNumber','purpose'])){showAlert('labAlert','danger','❌ Please fill all mandatory fields marked with *.');return;}
+  if(data.poNumber.length!==10||!/^[0-9]+$/.test(data.poNumber)){showAlert('labAlert','danger','❌ PO Number must be exactly 10 digits.');return;}
+  if(tests.length===0){showAlert('labAlert','danger','❌ Please select at least one test.');return;}
+  const btn=document.getElementById('labSubmitBtn');
+  btn.innerHTML='<span class="spinner"></span> Submitting...';btn.disabled=true;
+  data.fileUrl=await uploadFileToServer('labFile');
+  const r=await fetchFromSheet('submitRequest',data);
+  if(r&&r.success){showSuccessModal(r.requestId,r.submittedAt,data.requesterEmail);resetForm('lab');loadStats();}
+  else showAlert('labAlert','danger','❌ Submission failed. Please try again.');
+  btn.innerHTML='📨 Submit Lab Request';btn.disabled=false;
+}
+
+// SUBMIT WITNESS
+async function submitWitnessRequest(){
+  const data={type:'Witness',department:document.getElementById('witnessDept').value,requesterName:document.getElementById('witnessName').value.trim(),requesterEmail:document.getElementById('witnessEmail').value.trim(),witnessType:document.getElementById('witnessType').value,activity:document.getElementById('witnessActivity').value.trim(),scheduleDate:document.getElementById('witnessDate').value,scheduleTime:document.getElementById('witnessTime').value,location:document.getElementById('witnessLocation').value.trim(),equipment:document.getElementById('witnessEquipment').value.trim(),poNumber:document.getElementById('witnessPO').value.trim(),eicEngineer:document.getElementById('witnessEIC').value.trim(),toolsRequired:document.getElementById('witnessTools').value.trim(),specialInstructions:document.getElementById('witnessRemarks').value.trim()};
+  if(!validate(data,['department','requesterName','witnessType','activity','scheduleDate','scheduleTime','location'])){showAlert('witnessAlert','danger','❌ Please fill all mandatory fields marked with *.');return;}
+  const today=new Date();today.setHours(0,0,0,0);const sel=new Date(data.scheduleDate);sel.setHours(0,0,0,0);
+  if(sel<=today){showAlert('witnessAlert','danger','❌ Schedule date must be at least next calendar day.');return;}
+  const btn=document.getElementById('witnessSubmitBtn');
+  btn.innerHTML='<span class="spinner"></span> Submitting...';btn.disabled=true;
+  data.fileUrl=await uploadFileToServer('witnessFile');
+  const r=await fetchFromSheet('submitRequest',data);
+  if(r&&r.success){showSuccessModal(r.requestId,r.submittedAt,data.requesterEmail);resetForm('witness');loadStats();}
+  else showAlert('witnessAlert','danger','❌ Submission failed. Please try again.');
+  btn.innerHTML='📨 Submit Witness Request';btn.disabled=false;
+}
+
+function validate(obj,required){return required.every(f=>obj[f]&&obj[f].toString().trim()!=='');}
+
+// ALL REQUESTS
+async function loadMyRequests(){
+  const filterDate=document.getElementById('filterDate')?document.getElementById('filterDate').value:'';
+  const filterPeriod=document.getElementById('filterPeriod')?document.getElementById('filterPeriod').value:'';
+  const r=await fetchFromSheet('getRequests',{department:'ADMIN'});
+  let rows=r&&r.success?r.data:[];
+  if(filterDate){rows=rows.filter(r=>{if(!r.submittedAt)return false;const p=r.submittedAt.split('/');if(p.length<3)return false;return p[2].substring(0,4)+'-'+p[1]+'-'+p[0]===filterDate;});}
+  if(filterPeriod&&!filterDate){
+    const now=new Date();
+    rows=rows.filter(r=>{if(!r.submittedAt)return true;const p=r.submittedAt.split('/');if(p.length<3)return true;const d=new Date(p[2].substring(0,4)+'-'+p[1]+'-'+p[0]);if(isNaN(d))return true;const diff=(now-d)/(1000*60*60*24);if(filterPeriod==='daily')return diff<1;if(filterPeriod==='weekly')return diff<7;if(filterPeriod==='monthly')return diff<30;if(filterPeriod==='annually')return diff<365;return true;});
+  }
+  rows=[...rows].reverse();allRequests=rows;
+  const body=document.getElementById('myReqBody');
+  if(!rows.length){body.innerHTML='<tr><td colspan="8" style="text-align:center;color:var(--text-muted);padding:20px">'+(filterDate||filterPeriod?'📅 No requests for selected filter.':'No requests found.')+'</td></tr>';return;}
+  body.innerHTML=rows.map(r=>`<tr><td><span class="req-id-link" onclick="showDetail('${r.requestId}')">${r.requestId}</span></td><td>${r.type}</td><td>${r.department}</td><td>${r.requesterName}</td><td>${statusBadge(r.status)}</td><td>${r.assignedTo||'—'}</td><td>${r.submittedAt}</td><td><button class="btn btn-sm btn-outline" onclick="showDetail('${r.requestId}')">View</button></td></tr>`).join('');
+}
+
+function clearReqFilters(){document.getElementById('filterDate').value='';document.getElementById('filterPeriod').value='';loadMyRequests();}
+
+// ADMIN REQUESTS (dashboard)
+async function loadAdminRequests(){
+  if(!isAdmin)return;
+  document.getElementById('adminReqTable').style.display='block';
+  document.getElementById('adminReqMsg').style.display='none';
+  const filterDate=document.getElementById('adminFilterDate')?document.getElementById('adminFilterDate').value:'';
+  const filterPeriod=document.getElementById('adminFilterPeriod')?document.getElementById('adminFilterPeriod').value:'';
+  const r=await fetchFromSheet('getRequests',{department:'ADMIN'});
+  let rows=r&&r.success?r.data:[];
+  if(filterDate){rows=rows.filter(r=>{if(!r.submittedAt)return false;const p=r.submittedAt.split('/');if(p.length<3)return false;return p[2].substring(0,4)+'-'+p[1]+'-'+p[0]===filterDate;});}
+  if(filterPeriod&&!filterDate){
+    const now=new Date();
+    rows=rows.filter(r=>{if(!r.submittedAt)return true;const p=r.submittedAt.split('/');if(p.length<3)return true;const d=new Date(p[2].substring(0,4)+'-'+p[1]+'-'+p[0]);if(isNaN(d))return true;const diff=(now-d)/(1000*60*60*24);if(filterPeriod==='daily')return diff<1;if(filterPeriod==='weekly')return diff<7;if(filterPeriod==='monthly')return diff<30;if(filterPeriod==='annually')return diff<365;return true;});
+  }
+  rows=[...rows].reverse();allRequests=rows;
+  const body=document.getElementById('allReqBody');
+  if(!rows.length){body.innerHTML='<tr><td colspan="8" style="text-align:center;color:var(--text-muted);padding:20px">'+(filterDate||filterPeriod?'📅 No requests for selected filter.':'No requests yet.')+'</td></tr>';return;}
+  body.innerHTML=rows.map(r=>`<tr><td><span class="req-id-link" onclick="showDetail('${r.requestId}')">${r.requestId}</span></td><td>${r.type}</td><td>${r.department}</td><td>${r.requesterName}</td><td>${statusBadge(r.status)}</td><td>${r.assignedTo||'—'}</td><td>${r.submittedAt}</td><td><button class="btn btn-sm btn-primary" onclick="showDetail('${r.requestId}')">Manage</button></td></tr>`).join('');
+}
+
+function clearAdminFilters(){document.getElementById('adminFilterDate').value='';document.getElementById('adminFilterPeriod').value='';loadAdminRequests();}
+
+// DETAIL MODAL
+function toggleInspectionField(){
+  const status=document.getElementById('modalStatus').value;
+  const field=document.getElementById('inspectionField');
+  if(field){
+    field.style.display=status==='Closed'?'flex':'none';
+    // Pre-fill with current datetime when Closed is selected
+    if(status==='Closed'){
+      const now=new Date();
+      const local=new Date(now.getTime()-now.getTimezoneOffset()*60000).toISOString().slice(0,16);
+      const dtField=document.getElementById('modalInspectionDateTime');
+      if(dtField&&!dtField.value)dtField.value=local;
+    }
+  }
+}
+
+function showDetail(reqId){
+  const req=allRequests.find(r=>r.requestId===reqId);
+  if(!req){alert('Request not found. Please refresh.');return;}
+  document.getElementById('detailReqId').textContent=reqId;
+  const isClosed=req.status==='Closed';
+  const adminControls=isAdmin&&!isClosed?`<hr style="border:none;border-top:1.5px solid var(--border);margin:14px 0"><h4 style="font-family:Rajdhani,sans-serif;color:var(--cerulean);margin-bottom:10px">Admin Actions</h4><div class="form-grid">
+      <div class="form-group"><label>Update Status</label>
+        <select id="modalStatus" onchange="toggleInspectionField()">
+          <option value="Open" ${req.status==='Open'?'selected':''}>Open</option>
+          <option value="In Progress" ${req.status==='In Progress'?'selected':''}>In Progress</option>
+          <option value="Equipment / Site not ready" ${req.status==='Equipment / Site not ready'?'selected':''}>Equipment / Site not ready</option>
+          <option value="Closed" ${req.status==='Closed'?'selected':''}>Closed</option>
+          <option value="Any other reason" ${req.status==='Any other reason'?'selected':''}>Any other reason</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Assign To</label>
+        <select id="modalAssign"><option value="">-- Select Executive --</option>
+          ${executivesData.map(e=>`<option value="${e.name}" data-email="${e.email}" ${req.assignedTo===e.name?'selected':''}>${e.name}</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-group full" id="inspectionField" style="display:${req.status==='Closed'?'flex':'none'};flex-direction:column;gap:5px">
+        <label>🕐 Inspection Done At <span style="color:var(--accent)">*</span></label>
+        <input type="datetime-local" id="modalInspectionDateTime" value="${req.inspectionDateTime||''}">
+        <small style="color:var(--text-muted)">Pre-filled with current date/time. Change to actual inspection date &amp; time if different.</small>
+      </div>
+      <div class="form-group full"><label>Admin Remarks</label>
+        <textarea id="modalRemarks" style="min-height:60px">${req.adminRemarks||''}</textarea>
+      </div>
+    </div>
+    <button class="btn btn-primary" style="margin-top:10px" onclick="applyAdminAction('${reqId}')">💾 Save Changes</button>`:(isClosed?'<p style="color:var(--danger);font-weight:600;margin-top:12px">🔒 This request is closed.</p>':'');
+  document.getElementById('detailBody').innerHTML=`<div class="detail-grid"><div class="detail-item"><div class="d-label">Type</div><div class="d-value">${req.type}</div></div><div class="detail-item"><div class="d-label">Department</div><div class="d-value">${req.department}</div></div><div class="detail-item"><div class="d-label">Requester</div><div class="d-value">${req.requesterName}</div></div><div class="detail-item"><div class="d-label">Email</div><div class="d-value">${req.requesterEmail||'—'}</div></div><div class="detail-item"><div class="d-label">Status</div><div class="d-value">${statusBadge(req.status)}</div></div><div class="detail-item"><div class="d-label">Assigned To</div><div class="d-value">${req.assignedTo||'—'}</div></div><div class="detail-item"><div class="d-label">Submitted</div><div class="d-value">${req.submittedAt}</div></div><div class="detail-item"><div class="d-label">Last Updated</div><div class="d-value">${req.lastUpdated||'—'}</div></div>${req.type==='Lab'?`<div class="detail-item full"><div class="d-label">Tests</div><div class="d-value">${req.tests||'—'}</div></div><div class="detail-item"><div class="d-label">Sample Desc</div><div class="d-value">${req.sampleDescription||'—'}</div></div><div class="detail-item"><div class="d-label">Sampling Date</div><div class="d-value">${req.dateOfSampling||'—'}</div></div><div class="detail-item"><div class="d-label">Num Samples</div><div class="d-value">${req.numSamples||'—'}</div></div><div class="detail-item"><div class="d-label">PO Number</div><div class="d-value">${req.poNumber||'—'}</div></div><div class="detail-item"><div class="d-label">Purpose</div><div class="d-value">${req.purpose||'—'}</div></div><div class="detail-item"><div class="d-label">EIC Engineer</div><div class="d-value">${req.eicEngineer||'—'}</div></div>`:`<div class="detail-item"><div class="d-label">Activity</div><div class="d-value">${req.activity||'—'}</div></div><div class="detail-item"><div class="d-label">Schedule Date</div><div class="d-value">${req.scheduleDate||'—'}</div></div><div class="detail-item"><div class="d-label">Schedule Time</div><div class="d-value">${req.scheduleTime||'—'}</div></div><div class="detail-item"><div class="d-label">Location</div><div class="d-value">${req.location||'—'}</div></div><div class="detail-item"><div class="d-label">Equipment</div><div class="d-value">${req.equipment||'—'}</div></div><div class="detail-item"><div class="d-label">Tools</div><div class="d-value">${req.toolsRequired||'—'}</div></div>`}<div class="detail-item full"><div class="d-label">Special Instructions</div><div class="d-value">${req.specialInstructions||'—'}</div></div>${req.adminRemarks?`<div class="detail-item full"><div class="d-label">Admin Remarks</div><div class="d-value">${req.adminRemarks}</div></div>`:''} ${req.fileUrl?`<div class="detail-item full"><div class="d-label">Document</div><div class="d-value"><a href="${req.fileUrl}" target="_blank" class="btn btn-sm btn-outline">📎 View</a></div></div>`:''}</div>${adminControls}`;
+  openModal('detailModal');
+}
+
+async function applyAdminAction(reqId){
+  const assignSel=document.getElementById('modalAssign');
+  const assignedTo=assignSel.value;
+  const selectedOpt=assignSel.options[assignSel.selectedIndex];
+  const assignedEmail=selectedOpt?(selectedOpt.getAttribute('data-email')||''):'';
+  const execMatch=executivesData.find(e=>e.name===assignedTo);
+  const finalEmail=assignedEmail||(execMatch?execMatch.email:'');
+  const adminRemarks=document.getElementById('modalRemarks').value.trim();
+  const statusSel=document.getElementById('modalStatus');
+  let status=statusSel.value;
+
+  // If assigning to someone and status is Open, auto-set to In Progress
+  if(assignedTo && status==='Open'){
+    status='In Progress';
+    statusSel.value='In Progress'; // update dropdown visually too
+  }
+
+  if(assignedTo){
+    const ar=await fetchFromSheet('assignRequest',{requestId:reqId,assignedTo,assignedEmail:finalEmail});
+    if(!ar||!ar.success){alert('Assignment failed: '+(ar?ar.error:'Unknown error'));return;}
+  }
+
+  const inspDT=document.getElementById('modalInspectionDateTime')?document.getElementById('modalInspectionDateTime').value:'';
+  const r=await fetchFromSheet('updateStatus',{requestId:reqId,status,adminRemarks,inspectionDateTime:inspDT});
+  if(r&&r.success){closeModal('detailModal');loadAdminRequests();loadMyRequests();loadStats();}
+  else alert('Update failed: '+(r?r.error:'Unknown error'));
+}
+
+function statusBadge(s){const m={'Open':'badge-open','Closed':'badge-closed','In Progress':'badge-progress','Equipment / Site not ready':'badge-notready'};return`<span class="badge ${m[s]||'badge-open'}">${s||'Open'}</span>`;}
+
+// AUTH
+function doLogin(){
+  const u=document.getElementById('loginUser').value.trim().toLowerCase();
+  const p=document.getElementById('loginPass').value;
+  if(u===ADMIN_USER.toLowerCase()&&p===ADMIN_PASS){
+    isAdmin=true;
+    document.getElementById('loginBtn').style.display='none';
+    document.getElementById('userBadge').style.display='flex';
+    document.getElementById('adminNav').style.display='inline-block';
+    document.getElementById('allReqNav').style.display='inline-block';
+    document.getElementById('adminChartToggle').style.display='inline';
+    closeModal('loginModal');
+    loadAdminRequests();loadStats();
+  }else{document.getElementById('loginErr').style.display='block';}
+}
+
+function logout(){
+  isAdmin=false;
+  document.getElementById('loginBtn').style.display='inline-block';
+  document.getElementById('userBadge').style.display='none';
+  document.getElementById('adminNav').style.display='none';
+  document.getElementById('allReqNav').style.display='none';
+  document.getElementById('adminChartToggle').style.display='none';
+  document.getElementById('adminReqTable').style.display='none';
+  document.getElementById('adminReqMsg').style.display='block';
+  showSection('dashboard');
+}
+
+// SETTINGS
+function loadSettingsPanel(){document.getElementById('scriptUrlInput').value=scriptUrl;renderExecList();renderLabTestsMgmt();}
+function loadScriptUrlInput(){const el=document.getElementById('scriptUrlInput');if(el)el.value=scriptUrl;}
+
+function renderExecList(){
+  if(!executivesData.length)executivesData=[{name:'Savita Choubey',email:'savitachoubey@ntpc.co.in'},{name:'Hiteshkumar A. Singh',email:'hiteshsingh@ntpc.co.in'},{name:'Vijay Singh',email:'vijaysingh01@ntpc.co.in'},{name:'Neetu Meena',email:'neetumeena@ntpc.co.in'}];
+  document.getElementById('execList').innerHTML=executivesData.map((e,i)=>`<div class="exec-row"><input type="text" value="${e.name}" id="eName${i}" placeholder="Name"><input type="email" value="${e.email}" id="eEmail${i}" placeholder="email@ntpc.co.in"><button class="btn btn-danger btn-sm" onclick="this.parentElement.remove()">✕</button></div>`).join('');
+}
+function addExecRow(){const div=document.createElement('div');const i=Date.now();div.className='exec-row';div.innerHTML=`<input type="text" id="eName${i}" placeholder="Name"><input type="email" id="eEmail${i}" placeholder="email"><button class="btn btn-danger btn-sm" onclick="this.parentElement.remove()">✕</button>`;document.getElementById('execList').appendChild(div);}
+async function saveExecutives(){
+  const rows=document.querySelectorAll('#execList .exec-row');const executives=[];
+  rows.forEach(r=>{const inp=r.querySelectorAll('input');if(inp[0].value.trim())executives.push({name:inp[0].value.trim(),email:inp[1].value.trim()});});
+  executivesData=executives;
+  if(scriptUrl){const r=await fetchFromSheet('saveExecutives',{executives});showAlert('settingsAlert',r&&r.success?'success':'danger',r&&r.success?'✅ Saved.':'❌ Failed.');}
+}
+
+function renderLabTestsMgmt(){
+  const cats={};labTestsData.forEach(t=>{if(!cats[t.category])cats[t.category]=[];cats[t.category].push(t);});
+  document.getElementById('labTestsMgmt').innerHTML=Object.entries(cats).map(([cat,tests])=>`<div style="margin-bottom:12px"><h4 style="font-family:Rajdhani,sans-serif;color:var(--cerulean-dark);font-size:0.88rem;margin-bottom:6px">${cat}</h4>${tests.map((t,i)=>`<div class="exec-row" data-cat="${cat}"><input type="text" value="${t.test}" class="test-name-inp" placeholder="Test name"><label style="display:flex;align-items:center;gap:4px;font-size:0.8rem;white-space:nowrap"><input type="checkbox" ${t.active!==false&&t.active!=='false'?'checked':''} class="test-active-chk"> Active</label><button class="btn btn-danger btn-sm" onclick="this.parentElement.remove()">✕</button></div>`).join('')}</div>`).join('');
+}
+function addTestRow(){const cat=prompt('Category:');if(!cat)return;const test=prompt('Test name:');if(!test)return;labTestsData.push({category:cat.toUpperCase(),test,active:true});renderLabTestsMgmt();renderLabTests();}
+async function saveLabTestsAdmin(){
+  const tests=[];document.querySelectorAll('#labTestsMgmt .exec-row').forEach(row=>{const name=row.querySelector('.test-name-inp').value.trim();const active=row.querySelector('.test-active-chk').checked;const cat=row.getAttribute('data-cat');if(name&&cat)tests.push({category:cat,test:name,active});});
+  labTestsData=tests;renderLabTests();
+  if(scriptUrl){const r=await fetchFromSheet('saveLabTests',{tests});showAlert('settingsAlert',r&&r.success?'success':'danger',r&&r.success?'✅ Saved.':'❌ Failed.');}
+}
+function saveScriptUrl(){const u=document.getElementById('scriptUrlInput').value.trim();if(u){scriptUrl=u;showAlert('settingsAlert','success','✅ URL updated.');loadFromBackend();}}
+
+// RESET
+function resetForm(type){
+  if(type==='lab'){
+    document.querySelectorAll('input[name="labTest"]').forEach(c=>c.checked=false);
+    ['otherTest','labSampleDesc','labSamplingDate','labNumSamples','labPO','labPurpose','labEIC','labName','labEmail','labRemarks'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+    document.getElementById('labDept').value='';
+    const d=document.getElementById('labFileDrop');d.textContent='📎 Click to upload or drag & drop (PDF, DOC, DOCX, JPG, PNG — max 10MB)';d.classList.remove('has-file');
+    document.getElementById('labFile').value='';
+  }else{
+    ['witnessActivity','witnessEquipment','witnessPO','witnessEIC','witnessTools','witnessName','witnessEmail','witnessRemarks'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+    document.getElementById('witnessType').value='';document.getElementById('witnessDept').value='';
+    setMinWitnessDate();document.getElementById('witnessTime').value='';document.getElementById('witnessLocation').value='';
+    const d=document.getElementById('witnessFileDrop');d.textContent='📎 Click to upload or drag & drop (PDF, DOC, DOCX, JPG, PNG — max 10MB)';d.classList.remove('has-file');
+    document.getElementById('witnessFile').value='';
+  }
+}
+
+// MODALS
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+function showSuccessModal(reqId,submittedAt,email){
+  document.getElementById('successReqId').textContent=reqId||'';
+  document.getElementById('successDateTime').textContent='🕐 Submitted: '+(submittedAt||new Date().toLocaleString('en-IN'));
+  document.getElementById('successEmailNote').innerHTML=email?'📧 Confirmation email sent to <strong>'+email+'</strong>':'📧 Notification sent to FQA executives';
+  openModal('successModal');
+}
+
+// ALERT
+function showAlert(id,type,msg){
+  const el=document.getElementById(id);
+  el.className='alert alert-'+type+' show';el.innerHTML=msg;
+  setTimeout(()=>el.classList.remove('show'),type==='success'?12000:7000);
+}
+</script>
+</body>
+</html>
